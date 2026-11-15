@@ -83,6 +83,7 @@
     }
 
     /* Vnitřní karta se svatebním oznámením */
+    /*
     .card {
       position: absolute;
       left: 4%;
@@ -105,6 +106,7 @@
       flex-direction: column;
       overflow: hidden;
     }
+    */
 
     /* Fáze 1: Karta vyjíždí nahoru z kapsy obálky */
     .stage.is-sliding .card {
@@ -207,12 +209,14 @@
     }
     */
         /* Vnitřní hnědo-zlatý rámeček s obloukem nahoře */
+    /*
     .card-arch {
       position: relative;
       flex: 1;
       border: 1.5px solid var(--gold-brown);
       border-radius: 165px 165px 8px 8px;
       padding: 56px 18px 20px; /* Posunutí obsahu dolů od horního oblouku */
+      /*
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -229,15 +233,19 @@
       pointer-events: none;
       opacity: 0.7;
     }
+    */
 
     /* Nadpis SVATEBNÍ OZNÁMENÍ */
+    /*
     .card-subtitle {
       font-size: clamp(0.78rem, 3.2vw, 0.92rem);
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--gold-brown);
       margin-top: 14px; /* Posunutí nadpisu dolů */
+    /*
     }
+    
 
     .divider {
       width: 44px;
@@ -245,6 +253,7 @@
       background: linear-gradient(90deg, transparent, var(--gold-brown), transparent);
       margin: 8px auto;
     }
+    */
 
     /* Blok se jmény, mírně posunutý doleva pro uvolnění místa ilustraci */
     /*
@@ -256,7 +265,7 @@
       margin: 12px 0 6px;
       z-index: 3;
     }
-    */
+    
 
     .names {
       font-size: clamp(2rem, 8.2vw, 2.6rem);
@@ -274,20 +283,108 @@
       color: var(--gold-brown);
       margin: 3px 0;
     }
+    */
 
-    /* Absolutně pozicovaný PNG obrázek páru vpravo dole pod jmény */
+        /* Vnitřní karta se svatebním oznámením – klasický obdélníkový tvar */
+    .card {
+      position: absolute;
+      left: 4%;
+      right: 4%;
+      top: 2%;
+      bottom: 2%;
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 14px;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 6px 20px rgba(74, 57, 38, 0.14);
+      transform: translateY(10%) scale(0.92);
+      transition:
+        transform 0.65s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 0.28s ease,
+        box-shadow 0.65s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Vnitřní hnědo-zlatý obdélníkový rámeček */
+    .card-arch {
+      position: relative;
+      flex: 1;
+      border: 1.5px solid var(--gold-brown);
+      border-radius: 6px;
+      padding: 36px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .card-arch::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 0.75px solid var(--gold-light);
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* Nadpis SVATEBNÍ OZNÁMENÍ */
+    .card-subtitle {
+      font-size: clamp(0.82rem, 3.3vw, 0.96rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-brown);
+      margin-top: 4px;
+    }
+
+    /* Jména vycentrovaná přesně na střed karty */
+    .names-container {
+      position: relative;
+      width: 100%;
+      padding: 0;
+      margin: 10px 0;
+      z-index: 3;
+    }
+
+    .names {
+      font-size: clamp(2.1rem, 8.6vw, 2.75rem);
+      font-weight: normal;
+      line-height: 1.12;
+      color: var(--text-dark);
+      letter-spacing: 0.02em;
+      text-align: center;
+      text-shadow: 0 0 14px rgba(252, 249, 242, 0.9);
+    }
+
+    .names span.amp {
+      display: block;
+      font-style: italic;
+      font-size: 0.7em;
+      color: var(--gold-brown);
+      margin: 3px 0;
+    }
+
+    /* Obrázek páru jemně prolnutý za vycentrovanými jmény */
     .couple-art {
       position: absolute;
-      right: -2px; /* Zarovnání k pravému okraji vnitřního rámečku */
-      top: 36%;    /* Umístění vertikálně pod nadpis a vedle jmen */
-      width: 48%;  /* Přirozená velikost odpovídající předloze */
-      max-width: 180px;
+      left: 50%;
+      top: 47%;
+      transform: translate(-44%, -50%);
+      width: 78%;
+      max-width: 260px;
       height: auto;
       display: block;
-      z-index: 2;  /* Obrázek je pod textem jmen, aby nepřekážel čitelnosti */
+      z-index: 2;
       pointer-events: none;
-      opacity: 0.95;
+      opacity: 0.32;
     }
+    
 
     /* Blok s časem, datem a místem */
     .details {
