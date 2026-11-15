@@ -9,7 +9,6 @@
       --bg-page: #eae3d5;
       --paper-cream: #f7f2e8;
       --paper-shade: #ede4d3;
-      --paper-edge: #dfd3be;
       --card-bg: #fcf9f2;
       --gold-brown: #9e7642;
       --gold-light: #c5a06d;
@@ -41,26 +40,25 @@
     .stage {
       position: relative;
       width: min(92vw, 380px);
-      height: min(86dvh, 660px);
+      height: min(88dvh, 670px);
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1400px;
     }
 
-    /* Kontejner obálky */
+    /* Kontejner obálky (bez preserve-3d, aby fungoval z-index vrstev) */
     .envelope {
       position: relative;
       width: 100%;
-      height: 82%;
+      height: 80%;
       border-radius: 10px;
       box-shadow: 0 22px 45px rgba(74, 57, 38, 0.18), 0 4px 12px rgba(74, 57, 38, 0.08);
-      transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
-      transform-style: preserve-3d;
+      perspective: 1400px;
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Po otevření se obálka jemně posune dolů, aby karta měla prostor */
-    .stage.is-open .envelope {
+    /* Během vysouvání/zasouvání obálka mírně sjede níž, aby karta měla prostor */
+    .stage.is-sliding .envelope {
       transform: translateY(15%);
     }
 
@@ -87,33 +85,40 @@
     /* Vnitřní karta se svatebním oznámením */
     .card {
       position: absolute;
-      left: 5%;
-      right: 5%;
-      top: 4%;
-      bottom: 4%;
+      left: 4%;
+      right: 4%;
+      top: 2%;
+      bottom: 2%;
       background-color: var(--card-bg);
-      border-radius: 170px 170px 10px 10px;
+      border-radius: 175px 175px 12px 12px;
       padding: 14px;
       z-index: 2;
-      box-shadow: 0 4px 16px rgba(74, 57, 38, 0.12);
-      transform: translateY(0) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 6px 20px rgba(74, 57, 38, 0.14);
+      transform: translateY(10%) scale(0.92);
       transition:
-        transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.55s,
-        box-shadow 1.1s ease 0.55s;
+        transform 0.65s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 0.28s ease,
+        box-shadow 0.65s ease;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* Vysunutí karty nahoru při otevření */
-    .stage.is-open .card {
-      transform: translateY(-24%) scale(1.02);
-      box-shadow: 0 24px 50px rgba(74, 57, 38, 0.24);
+    /* Fáze 1: Karta vyjíždí nahoru z kapsy obálky */
+    .stage.is-sliding .card {
+      opacity: 1;
+      transform: translateY(-38%) scale(0.97);
     }
 
-    /* Přepnutí karty do popředí v druhé fázi animace */
-    .stage.card-front .card {
-      z-index: 6;
+    /* Fáze 2: Karta je v popředí a překrývá celou obálku */
+    .stage.is-presented .card {
+      z-index: 10;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0%) scale(1.04);
+      box-shadow: 0 26px 55px rgba(74, 57, 38, 0.28);
     }
 
     /* Vnitřní hnědo-zlatý rámeček s obloukem nahoře */
@@ -121,7 +126,7 @@
       position: relative;
       flex: 1;
       border: 1.5px solid var(--gold-brown);
-      border-radius: 160px 160px 6px 6px;
+      border-radius: 165px 165px 8px 8px;
       padding: 36px 20px 24px;
       display: flex;
       flex-direction: column;
@@ -135,7 +140,7 @@
       position: absolute;
       inset: 5px;
       border: 0.75px solid var(--gold-light);
-      border-radius: 155px 155px 4px 4px;
+      border-radius: 160px 160px 6px 6px;
       pointer-events: none;
       opacity: 0.7;
     }
@@ -226,15 +231,17 @@
       height: 56%;
       z-index: 4;
       transform-origin: top center;
-      transition:
-        transform 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.15s,
-        z-index 0s linear 0.55s;
+      transform: rotateX(0deg);
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: none;
       filter: drop-shadow(0 6px 10px rgba(74, 57, 38, 0.16));
     }
 
-    .stage.is-open .flap-top {
+    .stage.flap-open .flap-top {
       transform: rotateX(180deg);
+    }
+
+    .stage.flap-behind .flap-top {
       z-index: 1;
     }
 
@@ -253,8 +260,8 @@
       padding: 0;
       border-radius: 50%;
       transition:
-        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-        opacity 0.4s ease;
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.3s ease;
       animation: pulseSeal 2.6s infinite ease-in-out;
     }
 
@@ -266,9 +273,9 @@
       transform: translate(-50%, -50%) scale(0.95);
     }
 
-    .stage.is-open .wax-seal-btn {
+    .stage.seal-hidden .wax-seal-btn {
       opacity: 0;
-      transform: translate(-50%, -50%) scale(0.5);
+      transform: translate(-50%, -50%) scale(0.55);
       pointer-events: none;
       animation: none;
     }
@@ -290,11 +297,11 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      transition: opacity 0.4s ease;
+      transition: opacity 0.3s ease;
       pointer-events: none;
     }
 
-    .stage.is-open .hint {
+    .stage.seal-hidden .hint {
       opacity: 0;
     }
 
@@ -302,7 +309,8 @@
     .reset-btn {
       position: absolute;
       bottom: 4px;
-      background: rgba(252, 249, 242, 0.85);
+      z-index: 12;
+      background: rgba(252, 249, 242, 0.92);
       border: 1px solid var(--gold-light);
       color: var(--gold-brown);
       font-family: inherit;
@@ -314,10 +322,10 @@
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.5s ease 1.2s, background 0.2s ease;
+      transition: opacity 0.35s ease, background 0.2s ease;
     }
 
-    .stage.is-open .reset-btn {
+    .stage.is-presented .reset-btn {
       opacity: 1;
       pointer-events: auto;
     }
@@ -407,7 +415,6 @@
       <button type="button" class="wax-seal-btn" id="openBtn" aria-label="Otevřít svatební oznámení">
         <svg viewBox="0 0 120 120" width="88" height="88" aria-hidden="true">
           <defs>
-            <!-- Měděno-zlatý metalický gradient vosku -->
             <radialGradient id="waxBase" cx="35%" cy="30%" r="70%">
               <stop offset="0%" stop-color="#e5b07c" />
               <stop offset="45%" stop-color="#be7442" />
@@ -447,23 +454,69 @@
     const stage = document.getElementById("stage");
     const openBtn = document.getElementById("openBtn");
     const resetBtn = document.getElementById("resetBtn");
-    let frontTimer = null;
+    let timers = [];
+    let isAnimating = false;
+
+    function clearTimers() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
 
     openBtn.addEventListener("click", () => {
-      stage.classList.add("is-open");
-      // Po vysunutí karty z kapsy ji přepneme do popředí
-      frontTimer = setTimeout(() => {
-        stage.classList.add("card-front");
-      }, 950);
+      if (isAnimating) return;
+      isAnimating = true;
+      clearTimers();
+
+      // 1. Skrytí pečeti a odklopení horní klopy
+      stage.classList.add("seal-hidden", "flap-open");
+
+      // 2. V polovině odklopení klopy ji přesuneme za kartu
+      timers.push(setTimeout(() => {
+        stage.classList.add("flap-behind");
+      }, 320));
+
+      // 3. Vysunutí karty směrem nahoru z kapsy obálky
+      timers.push(setTimeout(() => {
+        stage.classList.add("is-sliding");
+      }, 450));
+
+      // 4. Přesun karty do popředí a usazení přes obálku
+      timers.push(setTimeout(() => {
+        stage.classList.remove("is-sliding");
+        stage.classList.add("is-presented");
+        isAnimating = false;
+      }, 1050));
     });
 
     resetBtn.addEventListener("click", () => {
-      clearTimeout(frontTimer);
-      stage.classList.remove("card-front");
-      // Krátká prodleva, aby karta zajela zpět pod přední kapsu
-      requestAnimationFrame(() => {
-        stage.classList.remove("is-open");
-      });
+      if (isAnimating) return;
+      isAnimating = true;
+      clearTimers();
+
+      // 1. Vyjetí karty nahoru nad obálku (stále v popředí)
+      stage.classList.remove("is-presented");
+      stage.classList.add("is-sliding");
+
+      // 2. Zasunutí karty zpět do kapsy obálky (za přední kapsu) a její skrytí
+      timers.push(setTimeout(() => {
+        stage.classList.remove("is-sliding");
+      }, 550));
+
+      // 3. Přiklopení horní klopy obálky
+      timers.push(setTimeout(() => {
+        stage.classList.remove("flap-open");
+      }, 950));
+
+      // 4. Vrácení klopy před kapsu v polovině zavírání
+      timers.push(setTimeout(() => {
+        stage.classList.remove("flap-behind");
+      }, 1250));
+
+      // 5. Zobrazení voskové pečeti
+      timers.push(setTimeout(() => {
+        stage.classList.remove("seal-hidden");
+        isAnimating = false;
+      }, 1500));
     });
   </script>
 </body>
