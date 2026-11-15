@@ -122,7 +122,7 @@
     }
 
     /* Vnitřní hnědo-zlatý rámeček s obloukem nahoře */
-    .card-arch {
+    /*.card-arch {
       position: relative;
       flex: 1;
       border: 1.5px solid var(--gold-brown);
@@ -205,7 +205,125 @@
       color: var(--text-muted);
       font-style: italic;
     }
+    */
+        /* Vnitřní hnědo-zlatý rámeček s obloukem nahoře */
+    .card-arch {
+      position: relative;
+      flex: 1;
+      border: 1.5px solid var(--gold-brown);
+      border-radius: 165px 165px 8px 8px;
+      padding: 56px 18px 20px; /* Posunutí obsahu dolů od horního oblouku */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
 
+    .card-arch::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 0.75px solid var(--gold-light);
+      border-radius: 160px 160px 6px 6px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* Nadpis SVATEBNÍ OZNÁMENÍ */
+    .card-subtitle {
+      font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-brown);
+      margin-top: 14px; /* Posunutí nadpisu dolů */
+    }
+
+    .divider {
+      width: 44px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-brown), transparent);
+      margin: 8px auto;
+    }
+
+    /* Blok se jmény, mírně posunutý doleva pro uvolnění místa ilustraci */
+    .names-container {
+      position: relative;
+      width: 100%;
+      padding-right: 25%; /* Vytvoří bezpečný prostor pro ilustraci vpravo */
+      margin: 12px 0 6px;
+      z-index: 3;
+    }
+
+    .names {
+      font-size: clamp(2rem, 8.2vw, 2.6rem);
+      font-weight: normal;
+      line-height: 1.1;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      text-align: center;
+    }
+
+    .names span.amp {
+      display: block;
+      font-style: italic;
+      font-size: 0.72em;
+      color: var(--gold-brown);
+      margin: 3px 0;
+    }
+
+    /* Absolutně pozicovaný PNG obrázek páru vpravo dole pod jmény */
+    .couple-art {
+      position: absolute;
+      right: -2px; /* Zarovnání k pravému okraji vnitřního rámečku */
+      top: 36%;    /* Umístění vertikálně pod nadpis a vedle jmen */
+      width: 48%;  /* Přirozená velikost odpovídající předloze */
+      max-width: 180px;
+      height: auto;
+      display: block;
+      z-index: 2;  /* Obrázek je pod textem jmen, aby nepřekážel čitelnosti */
+      pointer-events: none;
+      opacity: 0.95;
+    }
+
+    /* Blok s časem, datem a místem */
+    .details {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: auto;
+      margin-bottom: 8px;
+      width: 100%;
+      z-index: 3;
+    }
+
+    .date-time {
+      font-size: clamp(1.15rem, 4.6vw, 1.45rem);
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.35;
+    }
+
+    .venue-block {
+      margin-top: 18px;
+      line-height: 1.3;
+    }
+
+    .venue {
+      font-size: clamp(0.9rem, 3.6vw, 1.05rem);
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .address {
+      font-size: clamp(0.75rem, 3.2vw, 0.88rem);
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    
     /* Přední kapsa obálky (levá, pravá a spodní klopa) */
     .envelope-pocket {
       position: absolute;
@@ -344,29 +462,40 @@
 
       <!-- Vnitřní karta s oznámením -->
       <article class="card paper-texture" aria-label="Svatební oznámení">
-        <div class="card-arch">
+                <div class="card-arch">
+          <!-- Nadpis a dělicí čára -->
           <div>
             <h1 class="card-subtitle">Svatební oznámení</h1>
             <div class="divider"></div>
           </div>
 
-          <div class="names">
-            Adéla
-            <span class="amp">&amp;</span>
-            Honza
+          <!-- Jména posunutá do levé/středové části -->
+          <div class="names-container">
+            <div class="names">
+              Adéla
+              <span class="amp">&amp;</span>
+              Honza
+            </div>
           </div>
 
-          <!-- Minimalistický liniový motiv se srdíčky -->
-          <svg class="line-art" viewBox="0 0 140 44" aria-hidden="true">
-            <path d="M10,28 C28,28 32,12 24,12 C18,12 22,26 42,26 C62,26 66,8 70,16 C74,8 78,26 98,26 C118,26 122,12 116,12 C108,12 112,28 130,28" stroke-linecap="round" />
-          </svg>
+          <!-- Obrázek páru (par.png) napozicovaný vpravo -->
+          <img src="par.png" alt="Svatební pár" class="couple-art" />
 
+          <!-- Datum, čas a místo konání -->
           <div class="details">
-            <p class="date">29. 5. 2027<br>12:00</p>
+            <div class="date-time">
+              29. 5. 2027<br>12:00
+            </div>
+            
             <div class="divider"></div>
-            <p class="venue">Vítovský statek<br>Vítov 3, 274 01 Žižice-Slaný</p>
+            
+            <div class="venue-block">
+              <p class="venue">Vítovský statek</p>
+              <p class="address">Vítov 3, 274 01 Žižice-Slaný</p>
+            </div>
           </div>
         </div>
+
       </article>
 
       <!-- Přední kapsa obálky -->
