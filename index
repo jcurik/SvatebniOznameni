@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Svatební oznámení – Adéla &amp; Honza</title>
+  <style>
+    :root {
+      --bg-page: #eae3d5;
+      --paper-cream: #f7f2e8;
+      --paper-shade: #ede4d3;
+      --paper-edge: #dfd3be;
+      --card-bg: #fcf9f2;
+      --gold-brown: #9e7642;
+      --gold-light: #c5a06d;
+      --text-dark: #4a3926;
+      --text-muted: #7a644b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #f4efe6 0%, var(--bg-page) 100%);
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+      color: var(--text-dark);
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    /* Hlavní scéna na výšku (mobilní poměr stran) */
+    .stage {
+      position: relative;
+      width: min(92vw, 380px);
+      height: min(86dvh, 660px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1400px;
+    }
+
+    /* Kontejner obálky */
+    .envelope {
+      position: relative;
+      width: 100%;
+      height: 82%;
+      border-radius: 10px;
+      box-shadow: 0 22px 45px rgba(74, 57, 38, 0.18), 0 4px 12px rgba(74, 57, 38, 0.08);
+      transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d;
+    }
+
+    /* Po otevření se obálka jemně posune dolů, aby karta měla prostor */
+    .stage.is-open .envelope {
+      transform: translateY(15%);
+    }
+
+    /* Zadní stěna obálky */
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      background-color: var(--paper-shade);
+      border-radius: 10px;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* Jemná textura bavlněného papíru */
+    .paper-texture::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.28'/%3E%3C/svg%3E");
+    }
+
+    /* Vnitřní karta se svatebním oznámením */
+    .card {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      top: 4%;
+      bottom: 4%;
+      background-color: var(--card-bg);
+      border-radius: 170px 170px 10px 10px;
+      padding: 14px;
+      z-index: 2;
+      box-shadow: 0 4px 16px rgba(74, 57, 38, 0.12);
+      transform: translateY(0) scale(0.96);
+      transition:
+        transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.55s,
+        box-shadow 1.1s ease 0.55s;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Vysunutí karty nahoru při otevření */
+    .stage.is-open .card {
+      transform: translateY(-24%) scale(1.02);
+      box-shadow: 0 24px 50px rgba(74, 57, 38, 0.24);
+    }
+
+    /* Přepnutí karty do popředí v druhé fázi animace */
+    .stage.card-front .card {
+      z-index: 6;
+    }
+
+    /* Vnitřní hnědo-zlatý rámeček s obloukem nahoře */
+    .card-arch {
+      position: relative;
+      flex: 1;
+      border: 1.5px solid var(--gold-brown);
+      border-radius: 160px 160px 6px 6px;
+      padding: 36px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .card-arch::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 0.75px solid var(--gold-light);
+      border-radius: 155px 155px 4px 4px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .card-subtitle {
+      font-size: clamp(0.85rem, 3.4vw, 1rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-brown);
+      margin-top: 8px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-brown), transparent);
+      margin: 10px auto;
+    }
+
+    .names {
+      font-size: clamp(2rem, 8.5vw, 2.65rem);
+      font-weight: normal;
+      line-height: 1.15;
+      color: var(--text-dark);
+      letter-spacing: 0.02em;
+    }
+
+    .names span.amp {
+      display: block;
+      font-style: italic;
+      font-size: 0.65em;
+      color: var(--gold-brown);
+      margin: 2px 0;
+    }
+
+    .line-art {
+      width: 110px;
+      height: 36px;
+      stroke: var(--gold-brown);
+      fill: none;
+      stroke-width: 1.3;
+      opacity: 0.85;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .date {
+      font-size: clamp(1.15rem, 4.6vw, 1.35rem);
+      letter-spacing: 0.14em;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .venue {
+      font-size: clamp(0.95rem, 3.8vw, 1.1rem);
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Přední kapsa obálky (levá, pravá a spodní klopa) */
+    .envelope-pocket {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .envelope-pocket svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Horní 3D otevírací klopa */
+    .flap-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56%;
+      z-index: 4;
+      transform-origin: top center;
+      transition:
+        transform 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.15s,
+        z-index 0s linear 0.55s;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 10px rgba(74, 57, 38, 0.16));
+    }
+
+    .stage.is-open .flap-top {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    /* Měděno-zlatá vosková pečeť */
+    .wax-seal-btn {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 88px;
+      height: 88px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      z-index: 5;
+      padding: 0;
+      border-radius: 50%;
+      transition:
+        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.4s ease;
+      animation: pulseSeal 2.6s infinite ease-in-out;
+    }
+
+    .wax-seal-btn:hover {
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+
+    .wax-seal-btn:active {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    .stage.is-open .wax-seal-btn {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+      pointer-events: none;
+      animation: none;
+    }
+
+    @keyframes pulseSeal {
+      0%, 100% {
+        filter: drop-shadow(0 8px 14px rgba(92, 48, 20, 0.35));
+      }
+      50% {
+        filter: drop-shadow(0 12px 20px rgba(168, 93, 46, 0.5));
+      }
+    }
+
+    /* Nápověda pod obálkou */
+    .hint {
+      position: absolute;
+      bottom: 6px;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .stage.is-open .hint {
+      opacity: 0;
+    }
+
+    /* Tlačítko pro opětovné zavření */
+    .reset-btn {
+      position: absolute;
+      bottom: 4px;
+      background: rgba(252, 249, 242, 0.85);
+      border: 1px solid var(--gold-light);
+      color: var(--gold-brown);
+      font-family: inherit;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease 1.2s, background 0.2s ease;
+    }
+
+    .stage.is-open .reset-btn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .reset-btn:hover {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="stage" id="stage">
+    <div class="envelope">
+      <!-- Zadní část obálky -->
+      <div class="envelope-back paper-texture"></div>
+
+      <!-- Vnitřní karta s oznámením -->
+      <article class="card paper-texture" aria-label="Svatební oznámení">
+        <div class="card-arch">
+          <div>
+            <h1 class="card-subtitle">Svatební oznámení</h1>
+            <div class="divider"></div>
+          </div>
+
+          <div class="names">
+            Adéla
+            <span class="amp">&amp;</span>
+            Honza
+          </div>
+
+          <!-- Minimalistický liniový motiv se srdíčky -->
+          <svg class="line-art" viewBox="0 0 140 44" aria-hidden="true">
+            <path d="M10,28 C28,28 32,12 24,12 C18,12 22,26 42,26 C62,26 66,8 70,16 C74,8 78,26 98,26 C118,26 122,12 116,12 C108,12 112,28 130,28" stroke-linecap="round" />
+          </svg>
+
+          <div class="details">
+            <p class="date">29. 5. 2027</p>
+            <div class="divider"></div>
+            <p class="venue">Vítovský statek</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Přední kapsa obálky -->
+      <div class="envelope-pocket">
+        <svg viewBox="0 0 360 540" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="pocketLeft" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#f3ecde" />
+              <stop offset="100%" stop-color="#ebe1cf" />
+            </linearGradient>
+            <linearGradient id="pocketRight" x1="1" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#f3ecde" />
+              <stop offset="100%" stop-color="#e8decb" />
+            </linearGradient>
+            <linearGradient id="pocketBottom" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#f7f2e8" />
+              <stop offset="100%" stop-color="#ede4d3" />
+            </linearGradient>
+            <filter id="foldShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="-2" stdDeviation="3" flood-color="#4a3926" flood-opacity="0.12" />
+            </filter>
+          </defs>
+          <!-- Levá klopa -->
+          <polygon points="0,0 190,275 0,540" fill="url(#pocketLeft)" />
+          <!-- Pravá klopa -->
+          <polygon points="360,0 170,275 360,540" fill="url(#pocketRight)" />
+          <!-- Spodní klopa -->
+          <polygon points="0,540 180,255 360,540" fill="url(#pocketBottom)" filter="url(#foldShadow)" />
+        </svg>
+      </div>
+
+      <!-- Horní 3D klopa -->
+      <div class="flap-top">
+        <svg viewBox="0 0 360 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;" aria-hidden="true">
+          <defs>
+            <linearGradient id="topFlapGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f8f3e9" />
+              <stop offset="100%" stop-color="#ece2d0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,0 L360,0 L192,282 Q180,296 168,282 Z" fill="url(#topFlapGrad)" />
+        </svg>
+      </div>
+
+      <!-- Měděno-zlatá vosková pečeť -->
+      <button type="button" class="wax-seal-btn" id="openBtn" aria-label="Otevřít svatební oznámení">
+        <svg viewBox="0 0 120 120" width="88" height="88" aria-hidden="true">
+          <defs>
+            <!-- Měděno-zlatý metalický gradient vosku -->
+            <radialGradient id="waxBase" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#e5b07c" />
+              <stop offset="45%" stop-color="#be7442" />
+              <stop offset="85%" stop-color="#8f4b22" />
+              <stop offset="100%" stop-color="#6e3614" />
+            </radialGradient>
+            <radialGradient id="waxInner" cx="65%" cy="70%" r="65%">
+              <stop offset="0%" stop-color="#d99b66" />
+              <stop offset="60%" stop-color="#a85e30" />
+              <stop offset="100%" stop-color="#7a3e19" />
+            </radialGradient>
+          </defs>
+
+          <!-- Nepravidelný okraj voskové pečeti -->
+          <path d="M60,6 C73,5 86,10 96,19 C106,28 114,41 114,55 C115,69 109,84 99,95 C89,106 75,114 60,114 C45,114 31,107 21,96 C11,85 5,70 6,55 C7,40 13,26 24,17 C34,8 47,7 60,6 Z" fill="url(#waxBase)" />
+
+          <!-- Vnitřní prolis pečeti -->
+          <circle cx="60" cy="60" r="41" fill="url(#waxInner)" stroke="#e7b887" stroke-width="1.2" stroke-opacity="0.55" />
+          <circle cx="60" cy="60" r="38" fill="none" stroke="#5e2c0e" stroke-width="1.5" stroke-opacity="0.45" />
+
+          <!-- Reliéf srdce -->
+          <path d="M60,84 C60,84 36,68 36,51 C36,42 43,36 51,36 C55.5,36 58.5,38.5 60,41.5 C61.5,38.5 64.5,36 69,36 C77,36 84,42 84,51 C84,68 60,84 60,84 Z"
+                fill="none" stroke="#f3cfa7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Dva propletené snubní prsteny uvnitř srdce -->
+          <circle cx="55.5" cy="56" r="8.5" fill="none" stroke="#f6d8b6" stroke-width="2" />
+          <circle cx="64.5" cy="56" r="8.5" fill="none" stroke="#f6d8b6" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+
+    <p class="hint">Klikněte na pečeť</p>
+    <button type="button" class="reset-btn" id="resetBtn">Zavřít obálku</button>
+  </main>
+
+  <script>
+    const stage = document.getElementById("stage");
+    const openBtn = document.getElementById("openBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    let frontTimer = null;
+
+    openBtn.addEventListener("click", () => {
+      stage.classList.add("is-open");
+      // Po vysunutí karty z kapsy ji přepneme do popředí
+      frontTimer = setTimeout(() => {
+        stage.classList.add("card-front");
+      }, 950);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      clearTimeout(frontTimer);
+      stage.classList.remove("card-front");
+      // Krátká prodleva, aby karta zajela zpět pod přední kapsu
+      requestAnimationFrame(() => {
+        stage.classList.remove("is-open");
+      });
+    });
+  </script>
+</body>
+</html>
