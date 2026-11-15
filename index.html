@@ -371,6 +371,7 @@
     }
 
     /* Obrázek páru jemně prolnutý za vycentrovanými jmény */
+    /*
     .couple-art {
       position: absolute;
       left: 50%;
@@ -384,6 +385,22 @@
       pointer-events: none;
       opacity: 0.32;
     }
+    */
+    /* Obrázek páru zarovnaný úplně k pravému okraji */
+    .couple-art {
+      position: absolute;
+      right: 0;
+      top: 47%;
+      transform: translateY(-50%);
+      width: 68%;
+      max-width: 230px;
+      height: auto;
+      display: block;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    
     
 
     /* Blok s časem, datem a místem */
@@ -579,7 +596,7 @@
           </div>
 
           <!-- Obrázek páru (par.png) napozicovaný vpravo -->
-          <img src="par.png" alt="Svatební pár" class="couple-art" />
+          <img src="par(1).png" alt="Svatební pár" class="couple-art" />
 
           <!-- Datum, čas a místo konání -->
           <div class="details">
